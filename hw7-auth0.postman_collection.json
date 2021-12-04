@@ -1,0 +1,170 @@
+{
+	"info": {
+		"_postman_id": "bca7e0a6-026f-4424-ad40-a0bb24906a41",
+		"name": "hw7-auth0",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Post Secure",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{nate_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{              \n \"name\": \"Bad  Witch nate2\",       \n \"type\": \"Catamaran\",       \n \"length\": 28,              \n \"public\": false            \n \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://moorenat-hw7.uc.r.appspot.com/boats",
+					"protocol": "https",
+					"host": [
+						"moorenat-hw7",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"boats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login jwt",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"bobby@bob.com\",\n    \"password\": \"Bobby1989\"\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://moorenat-hw7.uc.r.appspot.com/login",
+					"protocol": "https",
+					"host": [
+						"moorenat-hw7",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Secure",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{nate_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://moorenat-hw7.uc.r.appspot.com/boats",
+					"protocol": "https",
+					"host": [
+						"moorenat-hw7",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"boats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "owners/owner_id/boats",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://moorenat-hw7.uc.r.appspot.com/owners/{{nate_id}}/boats",
+					"protocol": "https",
+					"host": [
+						"moorenat-hw7",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"owners",
+						"{{nate_id}}",
+						"boats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete boat/boat_id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{nate_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://moorenat-hw7.uc.r.appspot.com/boats/5642368648740864",
+					"protocol": "https",
+					"host": [
+						"moorenat-hw7",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"boats",
+						"5642368648740864"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

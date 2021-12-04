@@ -13,11 +13,12 @@ const datastore = new Datastore();
 const jwt = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
 
-const BOAT = "Boat";
+const PILOT = "Pilot";
 
 const router = express.Router();
 const login = express.Router();
 const owner = express.Router();
+const callback = express.Router();
 
 const CLIENT_ID = 'LNjMPnuvPFVQPsi2UZvCI4lhSZJobVDh';
 const CLIENT_SECRET = 'Smhe7JUl2seg75Xc5H6RMvc9q4u8QfKzjxNwGP3HYpFVaV21EILYlfJ4XGGTQ-Xb';
@@ -59,72 +60,104 @@ const checkJwt = jwt({
 });
 
 /* ------------- Begin Lodging Model Functions ------------- */
-function post_boat(name, type, length, public, owner) {
-    var key = datastore.key(BOAT);
-    const new_boat = { "name": name, "type": type, "length": length, "public": public, "owner": owner };
-    return datastore.save({ "key": key, "data": new_boat }).then(() => { return key });
+function post_pilot(name, type, length, public, owner) {
+    var key = datastore.key(PILOT);
+    const new_pilot = { "name": name, "type": type, "length": length, "public": public, "owner": owner };
+    return datastore.save({ "key": key, "data": new_pilot }).then(() => { return key });
 }
 
-function get_boats(owner) {
-    const q = datastore.createQuery(BOAT);
+function get_pilots(owner) {
+    const q = datastore.createQuery(PILOT);
     return datastore.runQuery(q).then((entities) => {
         return entities[0].map(fromDatastore).filter(item => item.owner === owner);
     });
 }
 
-function get_boats_unprotected() {
-    const q = datastore.createQuery(BOAT);
+function get_pilots_unprotected() {
+    const q = datastore.createQuery(PILOT);
     return datastore.runQuery(q).then((entities) => {
         return entities[0].map(fromDatastore);
     });
 }
-
-function get_lodging(id, owner) {
-    const key = datastore.key([LODGING, parseInt(id, 10)]);
-    return datastore.get(key).then((data) => {
-        return fromDatastore(data[0]);
-    }
-    );
+function get_pilot(id) {
+    const key = datastore.key([PILOT, parseInt(id, 10)]);
+    return datastore.get(key).then((entity) => {
+        if (entity[0] === undefined || entity[0] === null) {
+            // No entity found. Don't try to add the id attribute
+            return entity;
+        } else {
+            // Use Array.map to call the function fromDatastore. This function
+            // adds id attribute to every element in the array entity
+            return entity.map(fromDatastore);
+        }
+    });
 }
+function delete_pilot(id) {
+    const key = datastore.key([PILOT, parseInt(id, 10)]);
+    return datastore.delete(key);
+}
+
 
 /* ------------- End Model Functions ------------- */
 
 /* ------------- Begin Controller Functions ------------- */
 
+router.delete('/:pilot_id', checkJwt, function (req, res) {
+    const pilot_id = req.params.pilot_id
+    const owner = req.user.sub
 
+    const pilot = get_pilot(pilot_id).then((pilot) => {
+        if (pilot[0] === undefined || pilot[0] === null) {
+            res.status(403).send('one').end()
+        }
+        else if (pilot[0].owner === owner) {
+            delete_pilot(pilot_id).then(res.status(204).end())
+        }
+        else {
+            res.status(403).send('2').end()
+        }
+    })
+
+})
+
+callback.get('/', function (req, res) {
+
+
+
+})
 
 router.get('/', checkJwt, function (req, res) {
 
     console.log('jwt' + req.user);
     console.log(JSON.stringify(req.user));
-    const boats = get_boats(req.user.sub)
-        .then((boats) => {
-            res.status(200).json(boats);
+    const pilots = get_pilots(req.user.sub)
+        .then((pilots) => {
+            res.status(200).json(pilots);
         });
 });
 
 
 
 router.get('/unsecure', function (req, res) {
-    const boats = get_boats_unprotected()
-        .then((boats) => {
-            res.status(200).json(boats);
+    const pilots = get_pilots_unprotected()
+        .then((pilots) => {
+            res.status(200).json(pilots);
         });
 });
 
-owner.get('/:owner_id/boats', function (req, res) {
+owner.get('/:owner_id/pilots', function (req, res) {
     const owner = req.params.owner_id
-    const boatArr = []
+    const pilotArr = []
     console.log(owner)
-    const boats = get_boats_unprotected(owner)
-        .then((boats) => {
-            for (boat = 0; boat < boats.length; boat++) {
-                if (boats[boat].owner === owner && boats[boat].public) {
-                    boatArr.push(boats[boat])
-                    console.log(boatArr)
+    const pilots = get_pilots_unprotected(owner)
+        .then((pilots) => {
+            for (pilot = 0; pilot < pilots.length; pilot++) {
+                if (pilots[pilot].owner === owner && pilots[pilot].public) {
+                    pilotArr.push(pilots[pilot])
+                    console.log(pilotArr)
                 }
             }
-            res.status(200).json(boatArr)
+            res.status(200).json(pilotArr)
         });
 })
     ;
@@ -133,7 +166,7 @@ router.post('/', checkJwt, function (req, res) {
     if (req.get('content-type') !== 'application/json') {
         res.status(415).send('Server only accepts application/json data.')
     }
-    post_boat(req.body.name, req.body.type, req.body.length, req.body.public, req.user.sub)
+    post_pilot(req.body.name, req.body.type, req.body.length, req.body.public, req.user.sub)
         .then(key => {
             res.location(req.protocol + "://" + req.get('host') + req.baseUrl + '/' + key.id);
             res.status(201).send('{ "id": ' + key.id + ' }')
@@ -169,8 +202,9 @@ login.post('/', function (req, res) {
 
 /* ------------- End Controller Functions ------------- */
 app.use('/owners', owner);
-app.use('/boats', router);
+app.use('/pilots', router);
 app.use('/login', login);
+app.use('/callback', callback);
 
 // Listen to the App Engine-specified port, or 8080 otherwise
 const PORT = process.env.PORT || 8080;
