@@ -35,20 +35,6 @@ function fromDatastore(item) {
     return item;
 }
 
-function useJwt() {
-    return jwt({
-        secret: jwksRsa.expressJwtSecret({
-            cache: true,
-            rateLimit: true,
-            jwksRequestsPerMinute: 5,
-            jwksUri: `https://${DOMAIN}/.well-known/jwks.json`
-        }),
-
-        // Validate the audience and the issuer.
-        issuer: `https://${DOMAIN}/`,
-        algorithms: ['RS256']
-    });
-}
 
 const checkJwt = jwt({
     secret: jwksRsa.expressJwtSecret({
@@ -161,9 +147,9 @@ function get_plane_hanger(hanger_id) {
 
 // datastore functions for hangers
 
-function post_hanger(name, runway, occupied) {
+function post_hanger(name, runway, type) {
     var key = datastore.key(HANGER);
-    const new_hanger = { "name": name, "runway": runway, "occupied": occupied };
+    const new_hanger = { "name": name, "plane_id": null, "runway": runway, "type": type };
     return datastore.save({ "key": key, "data": new_hanger }).then(() => { return key });
 }
 function get_hanger(id) {
@@ -187,9 +173,9 @@ function get_hangers() {
     });
 }
 
-function patch_hanger(id, name, plane, runway, occupied, self) {
+function patch_hanger(id, name, plane_id, runway, type, self) {
     const key = datastore.key([HANGER, parseInt(id, 10)]);
-    const hanger = { "name": name, "plane": plane, "runway": runway, "occupied": occupied, "self": self };
+    const hanger = { "name": name, "plane_id": plane_id, "runway": runway, "type": type, "self": self };
     return datastore.save({ "key": key, "data": hanger });
 }
 
@@ -198,11 +184,17 @@ function delete_hanger(id) {
     return datastore.delete(key);
 }
 
-function get_hanger_plane(plane) {
+function get_hanger_plane(plane_id) {
     const q = datastore.createQuery(HANGER);
     return datastore.runQuery(q).then((entities) => {
-        return entities[0].map(fromDatastore).filter(item => item.plane === plane);
+        return entities[0].map(fromDatastore).filter(item => item.plane_id === plane_id);
     });
+}
+
+function set_hanger_plane(id, plane_id) {
+    const key = datastore.key([HANGER, parseInt(id, 10)]);
+    const hanger = { "plane_id": plane_id };
+    return datastore.save({ "key": key, "data": hanger });
 }
 
 /* ------------- End Model Functions ------------- */
@@ -256,6 +248,11 @@ router.patch('/', function (req, res) {
     res.set('Accept', 'GET, POST, DELETE');
     res.status(405).json({ 'Error': '/pilots only alows GET, POST, DELETE' });
 });
+router.delete('/', function (req, res) {
+    res.set('Accept', 'GET, POST, DELETE');
+    res.status(405).json({ 'Error': '/pilots only alows GET, POST, DELETE' });
+});
+
 
 // plane controler functions:
 
@@ -292,11 +289,16 @@ plane.delete('/:plane_id', checkJwt, async function (req, res) {
     const plane_id = req.params.plane_id
 
     let plane = await get_plane(plane_id)
+    let hanger = await get_hanger_plane(plane_id)
 
     if (plane[0] === undefined || plane[0] === null) {
         res.status(404).json({ 'Error': 'No plane found with this id' })
     }
     else if (plane[0].pilot === pilot) {
+
+        hanger = hanger[0]
+        await patch_hanger(hanger.id, hanger.name, null, hanger.runway, hanger.type, hanger.self)
+
         delete_plane(plane_id).then(res.status(204).end())
     }
     else {
@@ -311,30 +313,45 @@ plane.patch('/:plane_id', checkJwt, async function (req, res) {
 
     let plane = await get_plane(plane_id)
 
+
+
     if (plane[0] === undefined || plane[0] === null) {
         res.status(404).json({ 'Error': 'Plane not found' })
     }
+
     else if (plane[0].pilot === pilot) {
-        let { hanger, manufacturer, tailNo, color } = req.body
+        let { hanger_id, manufacturer, tailNo, color } = req.body
         if (req.get('content-type') !== 'application/json') {
             res.status(415).send('Server only accepts application/json data.')
         }
 
-        else if (!hanger && !manufacturer && !tailNo && !color) {
+        else if (!hanger_id && !manufacturer && !tailNo && !color) {
             return res.status(400).json({
                 Error: "The request object is missing at least one of the required attributes"
             })
         }
         else if (Object.keys(req.body).length > 4) {
             return res.status(400).json({
-                Error: 'There are too many attributes in request'
+                "Error": 'There are too many attributes in request'
             })
         }
         else {
-            plane = plane[0]
-            updatedPlane = Object.assign(plane, req.body)
-            planePatch = await patch_plane(plane_id, pilot, plane.hanger, plane.manufacturer, plane.tailNo, plane.color, plane.self)
-            res.status(200).json(plane)
+            let hanger = await get_hanger(plane[0].hanger_id)
+
+            hanger = hanger[0]
+            console.log(hanger)
+            if (hanger === undefined || hanger === null) {
+                res.status(404).json({ "Error": "Hanger not found" })
+            }
+
+            else {
+                await patch_hanger(hanger.id, hanger.name, plane_id, hanger.runway, hanger.type, hanger.self)
+                plane = plane[0]
+                updatedPlane = Object.assign(plane, req.body)
+                planePatch = await patch_plane(plane_id, pilot, plane.hanger_id, plane.manufacturer, plane.tailNo, plane.color, plane.self)
+                res.status(200).json(plane)
+            }
+
         }
     }
     else {
@@ -364,15 +381,24 @@ plane.post('/', checkJwt, async function (req, res) {
         res.status(415).json({ 'Error': 'Server only accepts application/json data' })
     }
     else {
-        const plane = await post_plane(req.user.sub, req.body.hanger, req.body.manufacturer, req.body.tailNo, req.body.color)
-        const hangers = await get_hangers()
+        let plane = await post_plane(req.user.sub, req.body.hanger_id, req.body.manufacturer, req.body.tailNo, req.body.color)
+        let hanger = await get_hanger(req.body.hanger_id)
 
-        for (i = 0; i <= hangers.length; i++) {
-
+        if (hanger[0] === undefined || hanger[0] === null) {
+            res.status(404).json({ 'Error': 'Hanger not found' })
         }
+
+        else if (hanger[0].plane_id != null) {
+            res.status(403).json({ 'Error': "Hanger is already occupied" })
+        }
+        else {
+            hanger = hanger[0]
+            await patch_hanger(req.body.hanger_id, hanger.name, plane.id, hanger.runway, hanger.type, hanger.self)
+        }
+
         let url = req.protocol + "://" + req.get("host") + "/planes/" + plane.id
-        let output = { "id": plane.id, "pilot": req.user.sub, "hanger": req.body.hanger, "manufacturer": req.body.manufacturer, "tailNo": req.body.tailNo, "color": req.body.color, "self": url }
-        const planeUpdate = await patch_plane(plane.id, req.user.sub, req.body.hanger, req.body.manufacturer, req.body.tailNo, req.body.color, url)
+        let output = { "id": plane.id, "pilot": req.user.sub, "hanger_id": req.body.hanger_id, "manufacturer": req.body.manufacturer, "tailNo": req.body.tailNo, "color": req.body.color, "self": url }
+        await patch_plane(plane.id, req.user.sub, req.body.hanger_id, req.body.manufacturer, req.body.tailNo, req.body.color, url)
         res.status(201).json(output)
     }
 
@@ -386,10 +412,10 @@ hanger.post('/', async function (req, res) {
         res.status(415).json({ 'Error': 'Server only accepts application/json data' })
     }
     else {
-        const hanger = await post_hanger(req.body.name, req.body.plane_id, req.body.runway, req.body.occupied)
+        const hanger = await post_hanger(req.body.name, req.body.runway, req.body.type)
         let url = req.protocol + "://" + req.get("host") + "/hangers/" + hanger.id
-        let output = { "id": hanger.id, "name": req.body.name, "plane_id": req.body.plane_id, "runway": req.body.runway, "occupied": req.body.occupied, "self": url }
-        const hangerUpdate = await patch_hanger(hanger.id, req.body.name, req.body.plane_id, req.body.runway, req.body.occupied, url)
+        let output = { "id": hanger.id, "name": req.body.name, "plane_id": null, "runway": req.body.runway, "type": req.body.type, "self": url }
+        const hangerUpdate = await patch_hanger(hanger.id, req.body.name, null, req.body.runway, req.body.type, url)
         res.status(201).json(output)
     }
 });
@@ -426,12 +452,12 @@ hanger.patch('/:hanger_id', async function (req, res) {
         res.status(404).json({ 'Error': 'Hanger not found' })
     }
     else {
-        let { name, runway, occupied } = req.body
+        let { name, runway, type } = req.body
         if (req.get('content-type') !== 'application/json') {
             res.status(415).send('Server only accepts application/json data.')
         }
 
-        else if (!name && !runway, !occupied) {
+        else if (!name && !runway && !type) {
             return res.status(400).json({
                 Error: "The request object is missing at least one of the required attributes"
             })
@@ -440,7 +466,7 @@ hanger.patch('/:hanger_id', async function (req, res) {
         else {
             hanger = hanger[0]
             updatedHanger = Object.assign(hanger, req.body)
-            hangerPatch = await patch_hanger(hanger_id, hanger.name, hanger.plane_id, hanger.runway, hanger.occupied, hanger.self)
+            hangerPatch = await patch_hanger(hanger_id, hanger.name, hanger.plane_id, hanger.runway, hanger.type, hanger.self)
             res.status(200).json(hanger)
         }
     }
@@ -450,9 +476,13 @@ hanger.delete('/:hanger_id', async function (req, res) {
     const hanger_id = req.params.hanger_id
 
     let hanger = await get_hanger(hanger_id)
+    let plane = await get_plane_hanger(hanger_id)
 
     if (hanger[0] === undefined || hanger[0] === null) {
         res.status(404).json({ 'Error': 'No hanger found with this id' })
+    }
+    else if (hanger[0].plane_id != null) {
+        res.status(403).json({ "Error": "Cannot delete hanger while occupied" })
     }
     else {
         delete_hanger(hanger_id).then(res.status(204).end())
