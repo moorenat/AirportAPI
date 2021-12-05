@@ -108,9 +108,9 @@ function delete_pilot(id) {
 
 // Datastore Functions for planes:
 
-function post_plane(pilot, hanger, manufacturer, tailNo, color) {
+function post_plane(pilot, hanger_id, manufacturer, tailNo, color) {
     var key = datastore.key(PLANE);
-    const new_plane = { "pilot": pilot, "hanger": hanger, "manufacturer": manufacturer, "tailNo": tailNo, "color": color };
+    const new_plane = { "pilot": pilot, "hanger_id": hanger_id, "manufacturer": manufacturer, "tailNo": tailNo, "color": color };
     return datastore.save({ "key": key, "data": new_plane }).then(() => { return key });
 }
 
@@ -141,9 +141,9 @@ function get_planes(pilot) {
     });
 }
 
-function patch_plane(id, pilot, hanger, manufacturer, tailNo, color, self) {
+function patch_plane(id, pilot, hanger_id, manufacturer, tailNo, color, self) {
     const key = datastore.key([PLANE, parseInt(id, 10)]);
-    const plane = { "pilot": pilot, "hanger": hanger, "manufacturer": manufacturer, "tailNo": tailNo, "color": color, "self": self };
+    const plane = { "pilot": pilot, "hanger_id": hanger_id, "manufacturer": manufacturer, "tailNo": tailNo, "color": color, "self": self };
     return datastore.save({ "key": key, "data": plane });
 }
 
@@ -152,11 +152,18 @@ function delete_plane(id) {
     return datastore.delete(key);
 }
 
+function get_plane_hanger(hanger_id) {
+    const q = datastore.createQuery(PLANE);
+    return datastore.runQuery(q).then((entities) => {
+        return entities[0].map(fromDatastore).filter(item => item.hanger_id === hanger_id);
+    });
+}
+
 // datastore functions for hangers
 
-function post_hanger(name, planes, capacity, runway) {
+function post_hanger(name, runway, occupied) {
     var key = datastore.key(HANGER);
-    const new_hanger = { "name": name, "planes": planes, "capacity": capacity, "runway": runway };
+    const new_hanger = { "name": name, "runway": runway, "occupied": occupied };
     return datastore.save({ "key": key, "data": new_hanger }).then(() => { return key });
 }
 function get_hanger(id) {
@@ -180,15 +187,22 @@ function get_hangers() {
     });
 }
 
-function patch_hanger(id, name, planes, capacity, runway, self) {
+function patch_hanger(id, name, plane, runway, occupied, self) {
     const key = datastore.key([HANGER, parseInt(id, 10)]);
-    const plane = { "name": name, "planes": planes, "capacity": capacity, "runway": runway, "self": self };
-    return datastore.save({ "key": key, "data": plane });
+    const hanger = { "name": name, "plane": plane, "runway": runway, "occupied": occupied, "self": self };
+    return datastore.save({ "key": key, "data": hanger });
 }
 
 function delete_hanger(id) {
     const key = datastore.key([HANGER, parseInt(id, 10)]);
     return datastore.delete(key);
+}
+
+function get_hanger_plane(plane) {
+    const q = datastore.createQuery(HANGER);
+    return datastore.runQuery(q).then((entities) => {
+        return entities[0].map(fromDatastore).filter(item => item.plane === plane);
+    });
 }
 
 /* ------------- End Model Functions ------------- */
@@ -351,6 +365,11 @@ plane.post('/', checkJwt, async function (req, res) {
     }
     else {
         const plane = await post_plane(req.user.sub, req.body.hanger, req.body.manufacturer, req.body.tailNo, req.body.color)
+        const hangers = await get_hangers()
+
+        for (i = 0; i <= hangers.length; i++) {
+
+        }
         let url = req.protocol + "://" + req.get("host") + "/planes/" + plane.id
         let output = { "id": plane.id, "pilot": req.user.sub, "hanger": req.body.hanger, "manufacturer": req.body.manufacturer, "tailNo": req.body.tailNo, "color": req.body.color, "self": url }
         const planeUpdate = await patch_plane(plane.id, req.user.sub, req.body.hanger, req.body.manufacturer, req.body.tailNo, req.body.color, url)
@@ -367,10 +386,10 @@ hanger.post('/', async function (req, res) {
         res.status(415).json({ 'Error': 'Server only accepts application/json data' })
     }
     else {
-        const hanger = await post_hanger(req.body.name, req.body.planes, req.body.capacity, req.body.runway)
+        const hanger = await post_hanger(req.body.name, req.body.plane_id, req.body.runway, req.body.occupied)
         let url = req.protocol + "://" + req.get("host") + "/hangers/" + hanger.id
-        let output = { "id": hanger.id, "name": req.body.name, "planes": req.body.planes, "capacity": req.body.capacity, "runway": req.body.runway, "self": url }
-        const hangerUpdate = await patch_hanger(hanger.id, req.body.name, req.body.planes, req.body.capacity, req.body.runway, url)
+        let output = { "id": hanger.id, "name": req.body.name, "plane_id": req.body.plane_id, "runway": req.body.runway, "occupied": req.body.occupied, "self": url }
+        const hangerUpdate = await patch_hanger(hanger.id, req.body.name, req.body.plane_id, req.body.runway, req.body.occupied, url)
         res.status(201).json(output)
     }
 });
@@ -407,12 +426,12 @@ hanger.patch('/:hanger_id', async function (req, res) {
         res.status(404).json({ 'Error': 'Hanger not found' })
     }
     else {
-        let { name, planes, capacity, runway } = req.body
+        let { name, runway, occupied } = req.body
         if (req.get('content-type') !== 'application/json') {
             res.status(415).send('Server only accepts application/json data.')
         }
 
-        else if (!name && !planes && !capacity && !runway) {
+        else if (!name && !runway, !occupied) {
             return res.status(400).json({
                 Error: "The request object is missing at least one of the required attributes"
             })
@@ -421,7 +440,7 @@ hanger.patch('/:hanger_id', async function (req, res) {
         else {
             hanger = hanger[0]
             updatedHanger = Object.assign(hanger, req.body)
-            hangerPatch = await patch_hanger(hanger_id, hanger.name, hanger.planes, hanger.capacity, hanger.runway, hanger.self)
+            hangerPatch = await patch_hanger(hanger_id, hanger.name, hanger.plane_id, hanger.runway, hanger.occupied, hanger.self)
             res.status(200).json(hanger)
         }
     }
