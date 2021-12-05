@@ -181,7 +181,7 @@ function get_hangers() {
 }
 
 function patch_hanger(id, name, planes, capacity, runway, self) {
-    const key = datastore.key([PLANE, parseInt(id, 10)]);
+    const key = datastore.key([HANGER, parseInt(id, 10)]);
     const plane = { "name": name, "planes": planes, "capacity": capacity, "runway": runway, "self": self };
     return datastore.save({ "key": key, "data": plane });
 }
@@ -194,6 +194,8 @@ function delete_hanger(id) {
 /* ------------- End Model Functions ------------- */
 
 /* ------------- Begin Controller Functions ------------- */
+
+//pilot controller functions:
 
 router.delete('/:pilot_id', checkJwt, function (req, res) {
     const pilot_id = req.params.pilot_id
@@ -241,6 +243,8 @@ router.patch('/', function (req, res) {
     res.status(405).json({ 'Error': '/pilots only alows GET, POST, DELETE' });
 });
 
+// plane controler functions:
+
 plane.get('/', checkJwt, async function (req, res) {
     const pilot = req.user.sub
     let planes = await get_planes(pilot)
@@ -262,6 +266,7 @@ plane.get('/unsecure', async function (req, res) {
         res.status(200).json(planes)
     }
 })
+
 plane.delete('/', function (req, res) {
     res.set('Accept', 'GET, POST, PATCH');
     res.status(405).json({ "Error": "Route only accetps GET, POST, PATCH. To Delete use /planes/:plane_id" })
@@ -278,7 +283,7 @@ plane.delete('/:plane_id', checkJwt, async function (req, res) {
         res.status(404).json({ 'Error': 'No plane found with this id' })
     }
     else if (plane[0].pilot === pilot) {
-        delete_plane().then(res.status(204).end())
+        delete_plane(plane_id).then(res.status(204).end())
     }
     else {
         res.status(403).json({ 'Error': 'Forbidden' })
@@ -354,6 +359,90 @@ plane.post('/', checkJwt, async function (req, res) {
 
 })
 
+//hanger controller functions:
+
+hanger.post('/', async function (req, res) {
+
+    if (req.get('content-type') !== 'application/json') {
+        res.status(415).json({ 'Error': 'Server only accepts application/json data' })
+    }
+    else {
+        const hanger = await post_hanger(req.body.name, req.body.planes, req.body.capacity, req.body.runway)
+        let url = req.protocol + "://" + req.get("host") + "/hangers/" + hanger.id
+        let output = { "id": hanger.id, "name": req.body.name, "planes": req.body.planes, "capacity": req.body.capacity, "runway": req.body.runway, "self": url }
+        const hangerUpdate = await patch_hanger(hanger.id, req.body.name, req.body.planes, req.body.capacity, req.body.runway, url)
+        res.status(201).json(output)
+    }
+});
+
+hanger.get('/', async function (req, res) {
+    const accepts = req.accepts('application/json')
+    if (!accepts) {
+        res.status(406).json({ 'Error': 'accept header must be application/json' })
+    }
+    else {
+        const hangers = await get_hangers()
+        res.status(200).json(hangers)
+    }
+});
+
+hanger.get('/:hanger_id', async function (req, res) {
+    const hanger_id = req.params.hanger_id
+
+    const hanger = await get_hanger(hanger_id)
+    if (hanger[0] === undefined || hanger[0] === null) {
+        res.status(404).json({ 'Error': 'Hanger not found' })
+    }
+    else {
+        res.status(200).json(hanger[0])
+    }
+});
+
+hanger.patch('/:hanger_id', async function (req, res) {
+    const hanger_id = req.params.hanger_id
+
+    let hanger = await get_hanger(hanger_id)
+
+    if (hanger[0] === undefined || hanger[0] === null) {
+        res.status(404).json({ 'Error': 'Hanger not found' })
+    }
+    else {
+        let { name, planes, capacity, runway } = req.body
+        if (req.get('content-type') !== 'application/json') {
+            res.status(415).send('Server only accepts application/json data.')
+        }
+
+        else if (!name && !planes && !capacity && !runway) {
+            return res.status(400).json({
+                Error: "The request object is missing at least one of the required attributes"
+            })
+        }
+
+        else {
+            hanger = hanger[0]
+            updatedHanger = Object.assign(hanger, req.body)
+            hangerPatch = await patch_hanger(hanger_id, hanger.name, hanger.planes, hanger.capacity, hanger.runway, hanger.self)
+            res.status(200).json(hanger)
+        }
+    }
+});
+
+hanger.delete('/:hanger_id', async function (req, res) {
+    const hanger_id = req.params.hanger_id
+
+    let hanger = await get_hanger(hanger_id)
+
+    if (hanger[0] === undefined || hanger[0] === null) {
+        res.status(404).json({ 'Error': 'No hanger found with this id' })
+    }
+    else {
+        delete_hanger(hanger_id).then(res.status(204).end())
+    }
+
+})
+
+// user controller function:
+
 user.get('/', function (req, res) {
     const pilots = get_pilots_unprotected()
         .then((pilots) => {
@@ -362,6 +451,7 @@ user.get('/', function (req, res) {
 });
 
 
+// backup login fucntion:
 
 login.post('/', function (req, res) {
     const username = req.body.username;
