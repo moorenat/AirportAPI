@@ -143,8 +143,8 @@ function patch_plane(id, pilot, hanger, manufacturer, tailNo, color, self) {
     return datastore.save({ "key": key, "data": plane });
 }
 
-function delete_planes(id) {
-    const key = datastore.key([PILOT, parseInt(id, 10)]);
+function delete_plane(id) {
+    const key = datastore.key([PLANE, parseInt(id, 10)]);
     return datastore.delete(key);
 }
 
@@ -228,6 +228,19 @@ plane.delete('/', function (req, res) {
 
 plane.delete('/:plane_id', checkJwt, async function (req, res) {
     const pilot = req.user.sub
+    const plane_id = req.params.plane_id
+
+    let plane = await get_plane(plane_id)
+
+    if (plane[0] === undefined || plane[0] === null) {
+        res.status(404).json({ 'Error': 'No plane found with this id' })
+    }
+    else if (plane[0].pilot === pilot) {
+        delete_plane().then(res.status(204).end())
+    }
+    else {
+        res.status(403).json({ 'Error': 'Forbidden' })
+    }
 
 })
 
