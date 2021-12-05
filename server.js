@@ -86,6 +86,7 @@ function get_pilots_unprotected() {
         return entities[0].map(fromDatastore);
     });
 }
+
 function get_pilot(id) {
     const key = datastore.key([PILOT, parseInt(id, 10)]);
     return datastore.get(key).then((entity) => {
@@ -99,6 +100,7 @@ function get_pilot(id) {
         }
     });
 }
+
 function delete_pilot(id) {
     const key = datastore.key([PILOT, parseInt(id, 10)]);
     return datastore.delete(key);
@@ -111,6 +113,7 @@ function post_plane(pilot, hanger, manufacturer, tailNo, color) {
     const new_plane = { "pilot": pilot, "hanger": hanger, "manufacturer": manufacturer, "tailNo": tailNo, "color": color };
     return datastore.save({ "key": key, "data": new_plane }).then(() => { return key });
 }
+
 function get_plane(id) {
     const key = datastore.key([PLANE, parseInt(id, 10)]);
     return datastore.get(key).then((entity) => {
@@ -124,6 +127,7 @@ function get_plane(id) {
         }
     });
 }
+
 function get_planes_unprotected() {
     const q = datastore.createQuery(PLANE);
     return datastore.runQuery(q).then((entities) => {
@@ -148,6 +152,44 @@ function delete_plane(id) {
     return datastore.delete(key);
 }
 
+// datastore functions for hangers
+
+function post_hanger(name, planes, capacity, runway) {
+    var key = datastore.key(HANGER);
+    const new_hanger = { "name": name, "planes": planes, "capacity": capacity, "runway": runway };
+    return datastore.save({ "key": key, "data": new_hanger }).then(() => { return key });
+}
+function get_hanger(id) {
+    const key = datastore.key([HANGER, parseInt(id, 10)]);
+    return datastore.get(key).then((entity) => {
+        if (entity[0] === undefined || entity[0] === null) {
+            // No entity found. Don't try to add the id attribute
+            return entity;
+        } else {
+            // Use Array.map to call the function fromDatastore. This function
+            // adds id attribute to every element in the array entity
+            return entity.map(fromDatastore);
+        }
+    });
+}
+
+function get_hangers() {
+    const q = datastore.createQuery(HANGER);
+    return datastore.runQuery(q).then((entities) => {
+        return entities[0].map(fromDatastore);
+    });
+}
+
+function patch_hanger(id, name, planes, capacity, runway, self) {
+    const key = datastore.key([PLANE, parseInt(id, 10)]);
+    const plane = { "name": name, "planes": planes, "capacity": capacity, "runway": runway, "self": self };
+    return datastore.save({ "key": key, "data": plane });
+}
+
+function delete_hanger(id) {
+    const key = datastore.key([HANGER, parseInt(id, 10)]);
+    return datastore.delete(key);
+}
 
 /* ------------- End Model Functions ------------- */
 
