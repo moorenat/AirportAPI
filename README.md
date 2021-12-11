@@ -92,7 +92,9 @@ JSON
 
 |  Outcome  |  Status Code  |  Notes/Output  |
 | --- | --- | --- |
-| Success | 201 Created | Response body returns datastore ID used for /delete requests on pilots: ```{ &quot;id&quot;: 5758707904282624 }```
+| Success | 201 Created | Response body returns datastore ID used for /delete requests on pilots: ```{
+ "name": "Test Pilot 1"
+}```
  |
 | Unauthorized | 401 Unauthorized | Returned if jwt token is missing or bad. |
 
@@ -118,9 +120,16 @@ Accept: &quot;application/json&quot;
 
 ## Response Example:
 ```
-[{&quot;name&quot;: &quot;Test Pilot 1&quot;,
-&quot;sub&quot;: &quot;auth0|61a9420ee36b36006b7dd779&quot;,
-&quot;id&quot;: &quot;5735151820603392&quot;}]
+[
+    {
+        "name": "Test Pilot 1",
+        "sub": "auth0|61a9420ee36b36006b7dd779",
+        "id": "5735151820603392"
+    }
+]
+![image](https://user-images.githubusercontent.com/67212507/145693427-ead07bc1-dc44-4017-9d08-e617c841468b.png)
+
+
 ```
 
 ## Delete Pilot: 
