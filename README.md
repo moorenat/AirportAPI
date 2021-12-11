@@ -11,19 +11,12 @@ Visit the login URL first to obtain jwt tokens.
 
 After logging in copy &quot;id\_token&quot; value to clipboard and save as jwt1 in the postman environment. Then log into or create another account and save that &quot;id\_token&quot; as jwt2 in the postman environment. Then you should be able to run the automated test suite without updating any other variables.
 
-## Pagination: 
-
-I intended to implement pagination with a combination of setting a query limit through datastore and having a next button in the returned results.
-
-I began looking into datastore query limiting but I ran out of time. I spent nearly a day getting my AuthO app to work on GCP so pagination was the lowest on my priority list.
-
-I suspect I could have gotten pagination working but I left it a little too long. I wanted to make sure to have a robust test suite for all of the endpoints.
-
 ## Data Model 
 
 This app supports three entities: Pilots, Planes, and Hangers.
 
-## Pilots:  This is the user entity.
+## Pilots:  
+This is the user entity.
 
 |  Property  |  Data Type  |  Notes  |
 | --- | --- | --- |
