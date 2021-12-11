@@ -281,15 +281,35 @@ Accept: &quot;application/json&quot;
 
 |  Outcome  |  Status Code  |  Notes/Output  |
 | --- | --- | --- |
-| Success | 200 OK | Response body returns array of pilot entities. [{&quot;name&quot;: &quot;Hanger1&quot;,&quot;plane\_id&quot;: &quot;5670706842959872&quot;,&quot;type&quot;: &quot;Enclosed&quot;,&quot;runway&quot;: &quot;North&quot;,&quot;self&quot;: &quot;http://moorenat-hw7.uc.r.appspot.com/hangers/5643550469390336&quot;,&quot;id&quot;: &quot;5643550469390336&quot;},{&quot;self&quot;: &quot;http://moorenat-hw7.uc.r.appspot.com/hangers/5657818854064128&quot;,&quot;runway&quot;: &quot;North&quot;,&quot;name&quot;: &quot;Hanger1&quot;,&quot;type&quot;: &quot;Enclosed&quot;,&quot;plane\_id&quot;: ## null##  ,&quot;id&quot;: &quot;5657818854064128&quot;}]
- |
+| Success | 200 OK | Response body returns array of pilot entities. |
+
+## Response Example:
+```
+[
+    {
+        "name": "Hanger1",
+        "plane_id": "5670706842959872",
+        "type": "Enclosed",
+        "runway": "North",
+        "self": "http://moorenat-hw7.uc.r.appspot.com/hangers/5643550469390336",
+        "id": "5643550469390336"
+    },
+    {
+        "self": "http://moorenat-hw7.uc.r.appspot.com/hangers/5657818854064128",
+        "runway": "North",
+        "name": "Hanger1",
+        "type": "Enclosed",
+        "plane_id": null,
+        "id": "5657818854064128"
+    }
+]
+```
 
 ## Get a hanger: 
 
 Unprotected endpoint to retrieve a specific hanger.
 
-| GET hangers/:hanger\_id
- |
+| GET hangers/:hanger\_id |
 | --- |
 
 ## Request body: N/A 
@@ -302,18 +322,26 @@ Accept: &quot;application/json&quot;
 
 |  Outcome  |  Status Code  |  Notes/output  |
 | --- | --- | --- |
-| Success | 200 OK | {&quot;name&quot;: &quot;Hanger1&quot;,&quot;runway&quot;: &quot;North&quot;,&quot;self&quot;: &quot;http://moorenat-hw7.uc.r.appspot.com/hangers/5657818854064128&quot;,&quot;plane\_id&quot;: &quot;5669826643099648&quot;,&quot;type&quot;: &quot;Enclosed&quot;,&quot;id&quot;: &quot;5657818854064128&quot;}
- |
+| Success | 200 OK | |
 | Failure | 404 Not Found | If the hanger does not exist |
-| Failure | 406 Not Acceptable | {&quot;Error&quot;: &quot;accept header must be application/json&quot;}
- |
+| Failure | 406 Not Acceptable | {&quot;Error&quot;: &quot;accept header must be application/json&quot;} |
 
+## Response Example:
+```
+{
+    "name": "Hanger1",
+    "runway": "North",
+    "self": "http://moorenat-hw7.uc.r.appspot.com/hangers/5657818854064128",
+    "plane_id": "5669826643099648",
+    "type": "Enclosed",
+    "id": "5657818854064128"
+}
+```
 ## Update a hanger: 
 
 Unprotected endpoint for changing attributes of a hanger.
 
-| PATCH /hangers/:hanger\_id
- |
+| PATCH /hangers/:hanger\_id |
 | --- |
 
 ## Request body: 
@@ -338,10 +366,13 @@ At least one of the three attributes is required.
 
 ## Request Body Example: 
 
-| {&quot;name&quot;: &quot;Hanger1&quot;,&quot;runway&quot;: &quot;North&quot;,&quot;type&quot;: &quot;Enclosed&quot;
+```
+{
+    "name": "Hanger1",
+    "runway": "North",
+    "type": "Enclosed"
 }
- |
-| --- |
+```
 
 ## Response body format: 
 
