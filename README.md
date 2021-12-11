@@ -600,8 +600,7 @@ Accept: &quot;application/json&quot;
 
 Protected endpoint to retrieve a specific plane. Requires valid jwt token.
 
-| GET /planes/:plane\_id
- |
+| GET /planes/:plane\_id|
 | --- |
 
 ## Request Body: N/A 
@@ -618,11 +617,23 @@ Accept: &quot;application/json&quot;
 
 |  Outcome  |  Status Code  |  Notes/Response  |
 | --- | --- | --- |
-| Success | 200 OK | {&quot;pilot&quot;: &quot;auth0|6192b8f9a70765006a0fb4ae&quot;,&quot;hanger\_id&quot;: 5678927947235328,&quot;self&quot;: &quot;http://moorenat-hw7.uc.r.appspot.com/planes/5655024910729216&quot;,&quot;tailNo&quot;: &quot;1999A&quot;,&quot;manufacturer&quot;: &quot;Boeing&quot;,&quot;color&quot;: &quot;Red&quot;,&quot;id&quot;: &quot;5655024910729216&quot;}
- |
+| Success | 200 OK | |
 | Failure | 404 Not Found | Plane does not exist |
 | Failure | 403 Forbidden | Plane exists but does not belong to the jwt token. |
 | Failure | 401 Unauthorized | Invalid jwt token |
+
+## Response Example:
+```
+{
+    "pilot": "auth0|6192b8f9a70765006a0fb4ae",
+    "hanger_id": 5678927947235328,
+    "self": "http://moorenat-hw7.uc.r.appspot.com/planes/5655024910729216",
+    "tailNo": "1999A",
+    "manufacturer": "Boeing",
+    "color": "Red",
+    "id": "5655024910729216"
+}
+```
 
 ## Update a plane: 
 
