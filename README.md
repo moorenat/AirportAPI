@@ -81,7 +81,7 @@ Accept: &quot;application/json&quot;
 
 ## Request body example: 
 
-| { &quot;name&quot;: &quot;Test Pilot 1&quot;} |
+ { &quot;name&quot;: &quot;Test Pilot 1&quot;} 
 
 
 ## Response body format: 
@@ -113,9 +113,15 @@ Accept: &quot;application/json&quot;
 
 |  Outcome  |  Status Code  |  Notes/Output  |
 | --- | --- | --- |
-| Success | 200 OK | Response body returns array of pilot entities. [{&quot;name&quot;: &quot;Test Pilot 1&quot;,&quot;sub&quot;: &quot;auth0|61a9420ee36b36006b7dd779&quot;,&quot;id&quot;: &quot;5735151820603392&quot;}]
- |
+| Success | 200 OK | Response body returns array of pilot entities. 
 | Unauthorized | 401 Unauthorized | Returned if jwt token is missing or bad. |
+
+## Response Example:
+
+[{&quot;name&quot;: &quot;Test Pilot 1&quot;,
+&quot;sub&quot;: &quot;auth0|61a9420ee36b36006b7dd779&quot;,
+&quot;id&quot;: &quot;5735151820603392&quot;}]
+ |
 
 ## Delete Pilot: 
 
