@@ -31,7 +31,8 @@ This app supports three entities: Pilots, Planes, and Hangers.
 | sub | String | AuthO identifier. Used by planes as the pilot identifier |
 | id | Integer | Datastore unique identifier. Used for /delete operation on pilots. |
 
-## Planes:  This is a protected entity tied to pilots.
+## Planes:  
+This is a protected entity tied to pilots.
 
 |  Property  |  Data Type  |  Notes  |
 | --- | --- | --- |
@@ -43,7 +44,8 @@ This app supports three entities: Pilots, Planes, and Hangers.
 | color | String | Color of the plane |
 | self | string | url of the plane entity |
 
-## Hangers:  This is an unprotected entity, however plane\_id cannot be changed unless by a secured post, patch or delete from /planes.
+## Hangers:  
+This is an unprotected entity, however plane\_id cannot be changed unless by a secured post, patch or delete from /planes.
 
 |  Property  |  Data type  |  Notes  |
 | --- | --- | --- |
@@ -102,7 +104,7 @@ Secure endpoint that returns all pilots associated with a valid jwt token.
 | GET /pilots |
 | --- |
 
-## Request body  : N/A
+## Request body: N/A
 
 ## Request Headers: 
 
@@ -142,8 +144,7 @@ Authorization: Bearer Token (jwt token)
 
 |  Outcome  |  Status Code  |  Notes/Output  |
 | --- | --- | --- |
-| Success | 204 No content |
- |
+| Success | 204 No content | |
 | Unauthorized | 401 Unauthorized | Returned if jwt token is missing or bad. |
 | Forbidden | 403 Forbidden | Returned if jwt token is valid but does not correspond to the pilot entity. |
 | Not Found | 404 Not Found | Returned if pilot entity does not exist |
