@@ -457,10 +457,14 @@ hanger\_id must be valid to post a plane. Make sure to create a hanger and use t
 | color | color of the plane | yes |
 
 ## Request body example: 
-
-| {&quot;hanger\_id&quot;: 5085025104035840&quot;manufacturer&quot;: &quot;Boeing&quot;,&quot;tailNo&quot;: &quot;1999A&quot;,&quot;color&quot;: &quot;Red&quot;}
- |
-| --- |
+```
+{
+    "hanger_id": 5085025104035840
+    "manufacturer": "Boeing",
+    "tailNo": "1999A",
+    "color": "Red"
+}
+```
 
 ## Response Body Format: 
 
@@ -470,8 +474,7 @@ JSON
 
 |  Outcome  |  Status Code  |  Notes  |
 | --- | --- | --- |
-| Success | 201 Created |
- |
+| Success | 201 Created | |
 | Failure | 415 Unsupported Media Type | Returned if request body is not application/json |
 | Failure | 403 Forbidden | Returned if hanger is already occupied |
 | Failure | 404 Not Found | Returned if hanger does not exist. |
@@ -480,16 +483,21 @@ JSON
 ## Response examples: 
 
 ## Success: 
-
-| {&quot;id&quot;: &quot;5737003958140928&quot;,&quot;pilot&quot;: &quot;auth0|6192b8f9a70765006a0fb4ae&quot;,&quot;hanger\_id&quot;: 5085025104035840,&quot;manufacturer&quot;: &quot;Boeing&quot;,&quot;tailNo&quot;: &quot;1999A&quot;,&quot;color&quot;: &quot;Red&quot;,&quot;self&quot;: &quot;http://moorenat-hw7.uc.r.appspot.com/planes/5737003958140928&quot;}
- |
-| --- |
+```
+{
+    "id": "5737003958140928",
+    "pilot": "auth0|6192b8f9a70765006a0fb4ae",
+    "hanger_id": 5085025104035840,
+    "manufacturer": "Boeing",
+    "tailNo": "1999A",
+    "color": "Red",
+    "self": "http://moorenat-hw7.uc.r.appspot.com/planes/5737003958140928"
+}
+```
 
 ## Failure: 
 
-| ## 403 forbidden 
-{&quot;Error&quot;: &quot;Hanger is already occupied&quot;}
- |
+| 403 forbidden {&quot;Error&quot;: &quot;Hanger is already occupied&quot;} |
 | --- |
 
 ## Read planes protected: 
