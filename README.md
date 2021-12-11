@@ -104,7 +104,8 @@ Secure endpoint that returns all pilots associated with a valid jwt token.
 | GET /pilots |
 | --- |
 
-## Request body: N/A
+## Request body: 
+N/A
 
 ## Request Headers: 
 
@@ -136,7 +137,8 @@ Secure endpoint for deleting a pilot entity. Requires valid jwt token and pilot\
 | DELETE /pilots/:pilot\_id |
 | --- |
 
-## Request body: N/A 
+## Request body: 
+N/A 
 
 ## Request Headers: 
 
@@ -161,7 +163,8 @@ Unsecure endpoint that returns all users/pilots
 | GET /users |
 | --- |
 
-## Request body: N/A 
+## Request body:
+N/A 
 
 ## Request Headers: 
 
@@ -381,8 +384,7 @@ At least one of the three attributes is required.
 
 |  Outcome  |  Status Code  |  Notes/Output  |
 | --- | --- | --- |
-| Success | 201 Created |
- |
+| Success | 201 Created ||
 | Failure | 415 Unsupported Media Type | Returned if request body is not application/JSON |
 | Failure | 400 Bad Request | Returned if request body is missing an attribute or if the attribute does not match the data model. |
 
