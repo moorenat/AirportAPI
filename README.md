@@ -92,7 +92,7 @@ JSON
 
 |  Outcome  |  Status Code  |  Notes/Output  |
 | --- | --- | --- |
-| Success | 201 Created | Response body returns datastore ID used for /delete requests on pilots: { &quot;id&quot;: 5758707904282624 }
+| Success | 201 Created | Response body returns datastore ID used for /delete requests on pilots: ```{ &quot;id&quot;: 5758707904282624 }```
  |
 | Unauthorized | 401 Unauthorized | Returned if jwt token is missing or bad. |
 
