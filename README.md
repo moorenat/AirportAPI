@@ -636,6 +636,8 @@ Accept: &quot;application/json&quot;
 ```
 
 ## Update a plane: 
+| PATCH /planes/:plane\_id |
+| --- |
 
 Protected endpoint for updated attributes of a plane.
 
@@ -662,10 +664,12 @@ At least one of the 4 attributes must be present.
 | color | color of the plane | no |
 
 ## Request body example: 
-
-| {&quot;color&quot;: &quot;black&quot;,&quot;manufacturer&quot;: &quot;cessna&quot;}
- |
-| --- |
+```
+{
+    "color": "black",
+    "manufacturer": "cessna"
+}
+```
 
 ## Response body format: 
 
@@ -686,17 +690,26 @@ At least one of the 4 attributes must be present.
 ## Response Examples: 
 
 ## Success: 
-
-| {&quot;hanger\_id&quot;: 5678927947235328,&quot;tailNo&quot;: &quot;1999A&quot;,&quot;manufacturer&quot;: &quot;cessna&quot;,&quot;pilot&quot;: &quot;auth0|6192b8f9a70765006a0fb4ae&quot;,&quot;color&quot;: &quot;black&quot;,&quot;self&quot;: &quot;http://moorenat-hw7.uc.r.appspot.com/planes/5655024910729216&quot;,&quot;id&quot;: &quot;5655024910729216&quot;}
- |
-| --- |
+```
+{
+    "hanger_id": 5678927947235328,
+    "tailNo": "1999A",
+    "manufacturer": "cessna",
+    "pilot": "auth0|6192b8f9a70765006a0fb4ae",
+    "color": "black",
+    "self": "http://moorenat-hw7.uc.r.appspot.com/planes/5655024910729216",
+    "id": "5655024910729216"
+}
+```
 
 ## Failure: 
 
-|  400 Bad Request: 
-{&quot;Error&quot;: &quot;The request object is missing at least one of the required attributes&quot;}
- |
-| --- |
+400 Bad Request:
+```
+{
+    "Error": "The request object is missing at least one of the required attributes"
+}
+```
 
 ## Delete a plane: 
 
@@ -712,8 +725,7 @@ Protected endpoint for deleting a plane. Requires valid jwt token corresponding 
 
 |  Outcome  |  Status Code  |  Notes  |
 | --- | --- | --- |
-| Success | 204 No Content |
- |
+| Success | 204 No Content ||
 | Failure | 404 Not Found | Plane does not exist |
 | Failure | 403 Forbidden | jwt is valid but does not correspond to pilot of plane |
 | Failure | 401 Unauthorized | Invalid or missing jwt. |
