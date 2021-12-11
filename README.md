@@ -391,23 +391,28 @@ At least one of the three attributes is required.
 ## Response Examples: 
 
 ## Success: 
-
-| {&quot;id&quot;: &quot;5657818854064128&quot;,&quot;name&quot;: &quot;Hanger1&quot;,&quot;plane\_id&quot;: ## null  ,&quot;runway&quot;: &quot;North&quot;,&quot;type&quot;: &quot;Enclosed&quot;,&quot;self&quot;: &quot;http://moorenat-hw7.uc.r.appspot.com/hangers/5657818854064128&quot;}
- |
-| --- |
-
+```
+{
+    "id": "5657818854064128",
+    "name": "Hanger1",
+    "plane_id": null,
+    "runway": "North",
+    "type": "Enclosed",
+    "self": "http://moorenat-hw7.uc.r.appspot.com/hangers/5657818854064128"
+}
+```
 ## Failure: 
-
-| {&quot;Error&quot;: &quot;Server only accepts application/json data&quot;}
- |
-| --- |
+```
+{
+    "Error": "Server only accepts application/json data"
+}
+```
 
 ## Delete a hanger: 
 
 Unprotected endpoint for deleting a hanger. Plane\_id must be null to be able to delete hanger.
 
-| DELETE /hangers/:hanger\_id
- |
+| DELETE /hangers/:hanger\_id|
 | --- |
 
 ## Request body: N/A 
