@@ -117,11 +117,11 @@ Accept: &quot;application/json&quot;
 | Unauthorized | 401 Unauthorized | Returned if jwt token is missing or bad. |
 
 ## Response Example:
-
+'''
 [{&quot;name&quot;: &quot;Test Pilot 1&quot;,
 &quot;sub&quot;: &quot;auth0|61a9420ee36b36006b7dd779&quot;,
 &quot;id&quot;: &quot;5735151820603392&quot;}]
- |
+'''
 
 ## Delete Pilot: 
 
