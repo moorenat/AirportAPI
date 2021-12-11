@@ -233,8 +233,7 @@ Content-Type: &quot;application/json&quot;
 
 |  Outcome  |  Status Code  |  Notes/Output  |
 | --- | --- | --- |
-| Success | 201 Created |
- |
+| Success | 201 Created ||
 | Failure | 415 Unsupported Media Type | Returned if request body is not application/JSON |
 
 ## Response Examples: 
