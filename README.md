@@ -131,8 +131,7 @@ Accept: &quot;application/json&quot;
 
 Secure endpoint for deleting a pilot entity. Requires valid jwt token and pilot\_id
 
-| DELETE /pilots/:pilot\_id
- |
+| DELETE /pilots/:pilot\_id |
 | --- |
 
 ## Request body: N/A 
@@ -175,8 +174,18 @@ Accept: &quot;application/json&quot;
 
 |  Outcome  |  Status Code  |  Notes/Output  |
 | --- | --- | --- |
-| Success | 200 OK | Response body returns array of pilot entities. [{&quot;name&quot;: &quot;Test Pilot 1&quot;,&quot;sub&quot;: &quot;auth0|61a9420ee36b36006b7dd779&quot;,&quot;id&quot;: &quot;5735151820603392&quot;}]
- |
+| Success | 200 OK | Response body returns array of pilot entities.|
+
+## Response body example:
+```
+[
+    {
+        "name": "Test Pilot 1",
+        "sub": "auth0|61a9420ee36b36006b7dd779",
+        "id": "5735151820603392"
+    }
+]
+```
 
 ## Create a Hanger: 
 
@@ -208,12 +217,13 @@ Content-Type: &quot;application/json&quot;
 | type | Type of hanger. e.g. &quot;Enclosed&quot;, &quot;Open&quot; etc | Yes |
 
 ## Request Body Example: 
-
-{"name" : "Hanger1",
-&quot;runway&quot;: &quot;North&quot;,&quot;type&quot;: &quot;Enclosed&quot;
+```
+{
+    "name": "Hanger1",
+    "runway": "North",
+    "type": "Enclosed"
 }
-
-
+```
 ## Response body format: 
 
 ## JSON 
@@ -230,22 +240,30 @@ Content-Type: &quot;application/json&quot;
 
 ## Success: 
 
-| {&quot;id&quot;: &quot;5657818854064128&quot;,&quot;name&quot;: &quot;Hanger1&quot;,&quot;plane\_id&quot;: ## null  ,&quot;runway&quot;: &quot;North&quot;,&quot;type&quot;: &quot;Enclosed&quot;,&quot;self&quot;: &quot;http://moorenat-hw7.uc.r.appspot.com/hangers/5657818854064128&quot;}
- |
-| --- |
+```
+{
+    "id": "5657818854064128",
+    "name": "Hanger1",
+    "plane_id": null,
+    "runway": "North",
+    "type": "Enclosed",
+    "self": "http://moorenat-hw7.uc.r.appspot.com/hangers/5657818854064128"
+}
+```
 
 ## Failure: 
 
-| {&quot;Error&quot;: &quot;Server only accepts application/json data&quot;}
- |
-| --- |
+```
+{
+    "Error": "Server only accepts application/json data"
+}
+```
 
 ## Get all Hangers: 
 
 Unprotected endpoint that returns all hangers.
 
-|  GET /hangers 
- |
+|  GET /hangers |
 | --- |
 
 ## Request Body: N/A 
