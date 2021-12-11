@@ -521,8 +521,32 @@ Accept: &quot;application/json&quot;
 
 |  Outcome  |  Status Code  |  Notes  |
 | --- | --- | --- |
-| Success | 200 OK | Returns array of plane entities[{&quot;tailNo&quot;: &quot;1999A&quot;,&quot;self&quot;: &quot;http://moorenat-hw7.uc.r.appspot.com/planes/5082649047597056&quot;,&quot;manufacturer&quot;: &quot;Boeing&quot;,&quot;color&quot;: &quot;Red&quot;,&quot;pilot&quot;: &quot;auth0|6192b8f9a70765006a0fb4ae&quot;,&quot;hanger\_id&quot;: &quot;5169161030336512&quot;,&quot;id&quot;: &quot;5082649047597056&quot;},{&quot;tailNo&quot;: &quot;1999A&quot;,&quot;self&quot;: &quot;http://moorenat-hw7.uc.r.appspot.com/planes/5106987083759616&quot;,&quot;manufacturer&quot;: &quot;Boeing&quot;,&quot;pilot&quot;: &quot;auth0|6192b8f9a70765006a0fb4ae&quot;,&quot;hanger\_id&quot;: &quot;5702124797165568&quot;,&quot;color&quot;: &quot;Red&quot;,&quot;id&quot;: &quot;5106987083759616&quot;}] |
+| Success | 200 OK | Returns array of plane entities|
 | Failure | 404 Not found | No planes exist for this pilot |
+
+## Response Example:
+```
+[
+    {
+        "tailNo": "1999A",
+        "self": "http://moorenat-hw7.uc.r.appspot.com/planes/5082649047597056",
+        "manufacturer": "Boeing",
+        "color": "Red",
+        "pilot": "auth0|6192b8f9a70765006a0fb4ae",
+        "hanger_id": "5169161030336512",
+        "id": "5082649047597056"
+    },
+    {
+        "tailNo": "1999A",
+        "self": "http://moorenat-hw7.uc.r.appspot.com/planes/5106987083759616",
+        "manufacturer": "Boeing",
+        "pilot": "auth0|6192b8f9a70765006a0fb4ae",
+        "hanger_id": "5702124797165568",
+        "color": "Red",
+        "id": "5106987083759616"
+    }
+]
+```
 
 ## Read planes unprotected: 
 
@@ -545,9 +569,32 @@ Accept: &quot;application/json&quot;
 
 |  Outcome  |  Status Code  |  Notes  |
 | --- | --- | --- |
-| Success | 200 OK | Returns array of plane entities[{&quot;tailNo&quot;: &quot;1999A&quot;,&quot;self&quot;: &quot;http://moorenat-hw7.uc.r.appspot.com/planes/5082649047597056&quot;,&quot;manufacturer&quot;: &quot;Boeing&quot;,&quot;color&quot;: &quot;Red&quot;,&quot;pilot&quot;: &quot;auth0|6192b8f9a70765006a0fb4ae&quot;,&quot;hanger\_id&quot;: &quot;5169161030336512&quot;,&quot;id&quot;: &quot;5082649047597056&quot;},{&quot;tailNo&quot;: &quot;1999A&quot;,&quot;self&quot;: &quot;http://moorenat-hw7.uc.r.appspot.com/planes/5106987083759616&quot;,&quot;manufacturer&quot;: &quot;Boeing&quot;,&quot;pilot&quot;: &quot;auth0|6192b8f9a70765006a0fb4ae&quot;,&quot;hanger\_id&quot;: &quot;5702124797165568&quot;,&quot;color&quot;: &quot;Red&quot;,&quot;id&quot;: &quot;5106987083759616&quot;}] |
-| Failure | 406 Not Acceptable | {&quot;Error&quot;: &quot;accept header must be application/json&quot;}
- |
+| Success | 200 OK | Returns array of plane entities |
+| Failure | 406 Not Acceptable | {&quot;Error&quot;: &quot;accept header must be application/json&quot;} |
+
+## Response Example:
+```
+[
+    {
+        "tailNo": "1999A",
+        "self": "http://moorenat-hw7.uc.r.appspot.com/planes/5082649047597056",
+        "manufacturer": "Boeing",
+        "color": "Red",
+        "pilot": "auth0|6192b8f9a70765006a0fb4ae",
+        "hanger_id": "5169161030336512",
+        "id": "5082649047597056"
+    },
+    {
+        "tailNo": "1999A",
+        "self": "http://moorenat-hw7.uc.r.appspot.com/planes/5106987083759616",
+        "manufacturer": "Boeing",
+        "pilot": "auth0|6192b8f9a70765006a0fb4ae",
+        "hanger_id": "5702124797165568",
+        "color": "Red",
+        "id": "5106987083759616"
+    }
+]
+```
 
 ## Read a plane: 
 
