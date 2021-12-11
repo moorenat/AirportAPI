@@ -1,8 +1,7 @@
 Nathaniel Moore
 
-moorenat@oregonstate.edu
+# Airport API hosted on GCP
 
-CS493 Final Project
 
 ## Account creation/login URL:  [https://moorenat-oauth.wl.r.appspot.com/](https://moorenat-oauth.wl.r.appspot.com/)
 
@@ -82,9 +81,8 @@ Accept: &quot;application/json&quot;
 
 ## Request body example: 
 
-| { &quot;name&quot;: &quot;Test Pilot 1&quot;}
- |
-| --- |
+| { &quot;name&quot;: &quot;Test Pilot 1&quot;} |
+
 
 ## Response body format: 
 
@@ -143,9 +141,8 @@ Authorization: Bearer Token (jwt token)
 
 ## Unsupported on Pilots: 
 
-|  /  pilots does not support PUT, PATCH, or DELETE (to delete use /pilots/:pilot\_id)
- |
-| --- |
+ /pilots does not support PUT, PATCH, or DELETE (to delete use /pilots/:pilot\_id)
+
 
 ## Read all pilots: 
 
@@ -175,8 +172,7 @@ Accept: &quot;application/json&quot;
 
 Unprotected endpoint for hanger creation. Initiates the value of plane\_id to null.
 
-| POST /hangers
- |
+| POST /hangers |
 | --- |
 
 ## Request Body: 
@@ -203,10 +199,10 @@ Content-Type: &quot;application/json&quot;
 
 ## Request Body Example: 
 
-| {&quot;name&quot;: &quot;Hanger1&quot;,&quot;runway&quot;: &quot;North&quot;,&quot;type&quot;: &quot;Enclosed&quot;
+{"name" : "Hanger1",
+&quot;runway&quot;: &quot;North&quot;,&quot;type&quot;: &quot;Enclosed&quot;
 }
- |
-| --- |
+
 
 ## Response body format: 
 
