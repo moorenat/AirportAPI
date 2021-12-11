@@ -679,8 +679,7 @@ At least one of the 4 attributes must be present.
 
 |  Outcome  |  Status Code  |  Notes  |
 | --- | --- | --- |
-| Success | 201 Created |
- |
+| Success | 201 Created | |
 | Failure | 415 Unsupported Media Type | Returned if request body is not application/json |
 | Failure | 403 Forbidden | Returned if hanger is already occupied |
 | Failure | 404 Not Found | Returned if hanger does not exist. |
